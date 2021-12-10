@@ -1,28 +1,17 @@
 import React, {useState} from 'react';
-import {
-  NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInputChangeEventData,
-  View,
-} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import ContentInnerScreen from '../components/ContentInnerScreen';
 import SpaceTop from '../components/SpaceTop';
 import dayjs from 'dayjs';
 import CustomTextInput from '../components/CustomTextInput';
 import CalendarPicker from 'react-native-calendar-picker';
-import Dialog from '../components/Dialog';
+import {calendarMonths, calendarWeekDays} from '../constants/appConstants';
 
 const HomeScreen = () => {
-  const [where, setwhere] = useState('');
-  const [showCheckDialog, setshowCheckDialog] = useState(false);
-
   const [selectedStartDate, setSelectedStartDate] = useState(dayjs());
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs());
 
-  const onDateChange = (date: any, type: string) => {
-    //function to handle the date change
+  const onDateChange = (date: any, type: 'START_DATE' | 'END_DATE') => {
     if (type === 'END_DATE') {
       setSelectedEndDate(date);
     } else {
@@ -30,16 +19,7 @@ const HomeScreen = () => {
       setSelectedStartDate(date);
     }
   };
-  const handleInputCheckPress = () => {
-    setshowCheckDialog(true);
-  };
 
-  const onChangeWhere = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-    setwhere(e.nativeEvent.text);
-  };
-  const handleCloseDialog = () => {
-    setshowCheckDialog(false);
-  };
   return (
     <View style={styles.container}>
       <ContentInnerScreen>
@@ -52,51 +32,34 @@ const HomeScreen = () => {
             </Text>
             <SpaceTop top={20} />
 
-            <CustomTextInput
-              placeholder="Anywhere"
-              value={where}
-              onChange={onChangeWhere}
-              labelText="where"
-            />
             <SpaceTop top={40} />
 
             <CustomTextInput
               placeholder="CHECK-IN "
-              labelText="check-in  - check-out"
-              // handleInputParentPress={handleInputCheckPress}
-              value={`${dayjs(selectedStartDate).format(
-                'ddd, MMM D YYYY',
-              )} - ${dayjs(selectedEndDate).isValid() ?dayjs(selectedEndDate).format('ddd, MMM D YYYY'):''}`}
+              labelText="check in  -  check out"
+              value={`${dayjs(selectedStartDate).format('ddd, MMM D YYYY')} - ${
+                dayjs(selectedEndDate).isValid()
+                  ? dayjs(selectedEndDate).format('ddd, MMM D YYYY')
+                  : ''
+              }`}
             />
             <CalendarPicker
               startFromMonday={true}
               allowRangeSelection={true}
               minDate={dayjs().toDate()}
-              maxDate={dayjs().add(6,'month').toDate()}
-              weekdays={['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']}
-              months={[
-                'January',
-                'Febraury',
-                'March',
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December',
-              ]}
+              maxDate={dayjs().add(6, 'month').toDate()}
+              weekdays={calendarWeekDays}
+              months={calendarMonths}
+              restrictMonthNavigation
               previousTitle="Previous"
               nextTitle="Next"
-              todayBackgroundColor="#e6ffe6"
+              todayBackgroundColor="#ffc107"
               selectedDayColor="#000000"
               selectedDayTextColor="#ffffff"
               scaleFactor={375}
+              allowBackwardRangeSelect={true}
               onDateChange={onDateChange}
             />
-           
           </View>
         </ScrollView>
       </ContentInnerScreen>
